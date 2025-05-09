@@ -25,6 +25,16 @@ function createTodo() {
     listTodos();
   });
 }
+
+// Function to delete a todo when clicked
+async function deleteTodo(id: string) {
+  try {
+    await client.models.Todo.delete({ id });
+    // No need to call listTodos() as the subscription will update automatically
+  } catch (error) {
+    console.error('Error deleting todo:', error);
+  }
+}
     
 // fetch todos when the component is mounted
  onMounted(() => {
@@ -37,10 +47,13 @@ function createTodo() {
   <main>
     <h1>My todos</h1>
     <button @click="createTodo">+ new</button>
+    <p class="hint">Click on a todo to delete it</p>
     <ul>
       <li 
         v-for="todo in todos" 
-        :key="todo.id">
+        :key="todo.id"
+        @click="deleteTodo(todo.id)"
+        class="todo-item">
         {{ todo.content }}
       </li>
     </ul>
@@ -52,4 +65,23 @@ function createTodo() {
       </a>
     </div>
   </main>
+<style scoped>
+.todo-item {
+  cursor: pointer;
+  transition: background-color 0.2s;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.todo-item:hover {
+  background-color: #f5f5f5;
+  text-decoration: line-through;
+}
+
+.hint {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 0;
+}
+</style>
 </template>
